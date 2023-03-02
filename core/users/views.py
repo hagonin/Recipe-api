@@ -24,9 +24,11 @@ from . import serializers
 from .renderers import UserRenderer
 from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
-from core.settings import env
-
+import environ
 from django.shortcuts import redirect
+
+
+env = environ.Env(DEBUG=(bool, False))
 
 class CustomRedirect(HttpResponsePermanentRedirect):
 
