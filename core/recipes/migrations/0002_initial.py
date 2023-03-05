@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('recipes', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -35,6 +35,10 @@ class Migration(migrations.Migration):
             model_name='ingredient',
             name='recipe',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='ingredients', to='recipes.recipe'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='recipereview',
+            unique_together={('recipe', 'slug')},
         ),
         migrations.AddIndex(
             model_name='recipe',

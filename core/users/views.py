@@ -17,6 +17,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str,smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
+import environ
 from recipes.models import Recipe
 from .models import Profile, CustomUser
 from recipes.serializers import RecipeSerializer
@@ -24,9 +25,9 @@ from . import serializers
 from .renderers import UserRenderer
 from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
-import environ
-from django.shortcuts import redirect
 
+
+from django.shortcuts import redirect
 
 env = environ.Env(DEBUG=(bool, False))
 
