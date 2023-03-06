@@ -5,9 +5,9 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 cloudinary.config(
-    cloud_name=config('CLOUD_NAME'),
-    api_key=config('CLOUD_API_KEY'),
-    api_secret=config('CLOUD_API_SECRET')
+    cloud_name=config('CLOUDINARY_NAME'),
+    api_key=config('CLOUDINARY_API'),
+    api_secret=config('CLOUDINARY_SECRET')
 )
 
 CACHES = {

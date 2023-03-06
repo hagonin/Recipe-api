@@ -5,9 +5,9 @@ DEBUG = True
 
 
 cloudinary.config(
-    cloud_name=config('CLOUD_NAME_1'),
-    api_key=config('CLOUD_API_KEY_1'),
-    api_secret=config('CLOUD_API_SECRET_1')
+    cloud_name=config('CLOUDINARY_NAME_1'),
+    api_key=config('CLOUDINARY_API_1'),
+    api_secret=config('CLOUDINARY_SECRET_1')
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
