@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["recipe-api.up.railway.app"]
 
 cloudinary.config(
     cloud_name=config('CLOUDINARY_NAME'),
