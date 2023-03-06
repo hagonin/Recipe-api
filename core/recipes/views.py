@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
-from django.views.decorators.gzip import gzip_page
 from django.views.decorators.vary import vary_on_cookie
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import action

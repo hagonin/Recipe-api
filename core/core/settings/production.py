@@ -11,13 +11,6 @@ cloudinary.config(
     api_secret=config('CLOUDINARY_SECRET')
 )
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'recipes_cache',
-    }
-}
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
