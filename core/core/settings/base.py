@@ -53,7 +53,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["http://recipe-api.up.railway.app"]
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -169,22 +168,20 @@ POSTGRES_LANGUAGE_UNACCENT = 'unaccent'
 
 # https://docs.djangoproject.com/en/4.1/topics/logging/
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        'verbose': {
-            'format': '%(levelname)s  %(asctime)s  %(module)s %(message)s'
-        },
-    },
-    "handlers": {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
-    },
+   'version': 1,
+   'disable_existing_loggers': False,
+   'handlers': {
+      'file': {
+         'level': 'DEBUG',
+         'class': 'logging.FileHandler',
+         'filename': '/tmp/debug.log',
+      },
+   },
+   'loggers': {
+      'django': {
+         'handlers': ['file'],
+         'level': 'DEBUG',
+         'propagate': True,
+      },
+   },
 }
