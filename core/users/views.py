@@ -17,7 +17,6 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str,smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
-import environ
 from recipes.models import Recipe
 from .models import Profile, CustomUser
 from recipes.serializers import RecipeSerializer
@@ -25,15 +24,13 @@ from . import serializers
 from .renderers import UserRenderer
 from django.shortcuts import redirect
 from django.http import HttpResponsePermanentRedirect
-
+from decouple import config
 
 from django.shortcuts import redirect
 
-env = environ.Env(DEBUG=(bool, False))
-
 class CustomRedirect(HttpResponsePermanentRedirect):
 
-    allowed_schemes = [env('APP_SCHEME'), 'http', 'https']
+    allowed_schemes = [config('APP_SCHEME'), 'http', 'https']
 
 class RegisterView(generics.GenericAPIView):
     """
@@ -64,7 +61,6 @@ class RegisterView(generics.GenericAPIView):
         Util.send_email(user_data)
         return Response(data, status=status.HTTP_201_CREATED)
 
-
 class VerifyEmail(views.APIView):
     serializer_class = serializers.EmailVerificationSerializer
 
@@ -90,6 +86,12 @@ class VerifyEmail(views.APIView):
 class ResendVerifyEmail(views.APIView):
     serializer_class = serializers.RegistrationSerializer
 
+    email = openapi.Parameter('email', in_=openapi.IN_QUERY,
+                        type=openapi.TYPE_INTEGER)
+    @swagger_auto_schema(
+        operation_description="Resend your email to get an email verify",
+        manual_parameters=[email],
+    )
     def post(self, request):
         data = request.data
         email = data['email']
@@ -128,6 +130,9 @@ class LoginView(generics.GenericAPIView):
 class RequestResetPassword(generics.GenericAPIView):
     serializer_class = serializers.RequestResetPasswordSerializer
 
+    @swagger_auto_schema(
+        operation_description="This sends email to request reset password"
+    )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
 
@@ -155,6 +160,9 @@ class RequestResetPassword(generics.GenericAPIView):
 class PasswordTokenCheckAPI(generics.GenericAPIView):
     serializer_class = serializers.SetNewPasswordSerializer
 
+    @swagger_auto_schema(
+        operation_description="This returns token and uidb64 to reset password"
+    )
     def get(self, request, uidb64, token):
 
         redirect_url = request.GET.get('redirect_url')
@@ -167,12 +175,12 @@ class PasswordTokenCheckAPI(generics.GenericAPIView):
                 if len(redirect_url) > 3:
                     return CustomRedirect(redirect_url+'?token_valid=False')
                 else:
-                    return CustomRedirect(env('FRONTEND_URL', '')+'?token_valid=False')
+                    return CustomRedirect(config('FRONTEND_URL', '')+'?token_valid=False')
 
             if redirect_url and len(redirect_url) > 3:
                 return CustomRedirect(redirect_url+'?token_valid=True&message=Credentials Valid&uidb64='+uidb64+'&token='+token)
             else:
-                return CustomRedirect(env('FRONTEND_URL', '')+'?token_valid=False')
+                return CustomRedirect(config('FRONTEND_URL', '')+'?token_valid=False')
 
         except DjangoUnicodeDecodeError as identifier:
             try:
@@ -251,6 +259,9 @@ class BookmarkView(generics.ListCreateAPIView):
         
         return user_profile.bookmarks.all()
 
+    @swagger_auto_schema(
+        operation_description="ID relates to user_id to add recipe in bookmarks"
+    )
     def post(self, request, pk):
         user = CustomUser.objects.get(id=pk)
         user_profile = get_object_or_404(self.profile, user=user)
@@ -260,6 +271,9 @@ class BookmarkView(generics.ListCreateAPIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="ID relates to user_id to delete recipe in bookmarks"
+    )
     def delete(self, request, pk):
         user = CustomUser.objects.get(id=pk)
         user_profile = get_object_or_404(self.profile, user=user)

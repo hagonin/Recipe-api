@@ -11,32 +11,20 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import cloudinary
 import os
-import environ
 import dj_database_url
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
-env = environ.Env(DEBUG=(bool, False))
 
-# Set the project base directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-DEBUG = env('DEBUG')
-
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-cloudinary.config(
-    cloud_name=env("CLOUDINARY_NAME"),
-    api_key=env("CLOUDINARY_API"),
-    api_secret=env("CLOUDINARY_SECRET"),
-    secure=True
-)
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = config('SECRET_KEY')
 
 ALLOWED_HOSTS = ["recipe-api.up.railway.app", 
                 "127.0.0.1"]
@@ -125,31 +113,11 @@ else:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': env.str("DB_PASSWORD", default="postgres"),
-            'HOST': env.str("DB_HOSTNAME"),
-            'PORT': env.int("DB_PORT")
+            'PASSWORD': config("DB_PASSWORD", default="postgres"),
+            'HOST': config("DB_HOSTNAME"),
+            'PORT': config("DB_PORT")
         }
     }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -175,12 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'recipe_cache',
-    }
-}
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -207,11 +169,24 @@ SIMPLE_JWT = {
 
 POSTGRES_LANGUAGE_UNACCENT = 'unaccent'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = env("EMAIL_HOST")
-EMAIL_PORT = 587
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_USE_TLS = True
-
+# https://docs.djangoproject.com/en/4.1/topics/logging/
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        'verbose': {
+            'format': '%(levelname)s  %(asctime)s  %(module)s %(message)s'
+        },
+    },
+    "handlers": {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}

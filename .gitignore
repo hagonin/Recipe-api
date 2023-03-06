@@ -57,7 +57,7 @@ coverage.xml
 
 # Django stuff:
 *.log
-local_settings.py
+core/settings/development.py
 db.sqlite3
 db.sqlite3-journal
 
@@ -103,6 +103,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.example
 .venv
 env/
 venv/
