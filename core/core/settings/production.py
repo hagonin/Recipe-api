@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["recipe-api.up.railway.app"]
 CSRF_TRUSTED_ORIGINS = ["http://recipe-api.up.railway.app"]
