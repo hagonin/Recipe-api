@@ -4,7 +4,7 @@ DEBUG = False
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-ALLOWED_HOSTS = ['"recipe-api.up.railway.app']
+ALLOWED_HOSTS = ['recipe-api.up.railway.app']
 CSRF_TRUSTED_ORIGINS = ['https://recipe-api.up.railway.app']
 
 cloudinary.config(
