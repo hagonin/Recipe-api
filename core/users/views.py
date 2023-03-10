@@ -1,33 +1,31 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status
-from django.utils.translation import gettext_lazy as _
-from rest_framework.response import Response
 import jwt
 from django.conf import settings
+from .utils import Util
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
+from django.utils.encoding import smart_str,smart_bytes, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.http import HttpResponsePermanentRedirect
+from django.shortcuts import redirect
+from decouple import config
 
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import generics, views
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
-from .utils import Util
-from drf_spectacular.utils import extend_schema,OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str,smart_bytes, DjangoUnicodeDecodeError
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
+from . import serializers
+from recipes.serializers import RecipeSerializer
 from recipes.models import Recipe
 from .models import Profile, CustomUser
-from recipes.serializers import RecipeSerializer
-from . import serializers
 from .renderers import UserRenderer
-from django.shortcuts import redirect
-from django.http import HttpResponsePermanentRedirect
-from decouple import config
 
-from django.shortcuts import redirect
 
 class CustomRedirect(HttpResponsePermanentRedirect):
 
@@ -67,7 +65,7 @@ class VerifyEmail(views.APIView):
     token_param_config = openapi.Parameter(
         'token', in_=openapi.IN_QUERY, description='Description', type=openapi.TYPE_STRING)
     
-    @extend_schema(parameters=[token_param_config])
+    @swagger_auto_schema(manual_parameters=[token_param_config])
     def get(self, request):
         token = request.GET.get('token')
         try:
@@ -86,15 +84,11 @@ class VerifyEmail(views.APIView):
 class ResendVerifyEmail(views.APIView):
     serializer_class = serializers.RegistrationSerializer
 
-    # email = openapi.Parameter('email', in_=openapi.IN_QUERY,
-    #                     type=openapi.TYPE_INTEGER)
-    email =  OpenApiParameter(name='email', 
-                            type=OpenApiTypes.EMAIL,
-                            location=OpenApiParameter.QUERY
-                            )
-    @extend_schema(
-        description="Resend your email to get an email verify",
-        parameters=[email],
+    email = openapi.Parameter('email', in_=openapi.IN_QUERY,
+                        type=openapi.TYPE_STRING)
+    @swagger_auto_schema(
+        operation_description="Resend your email to get an email verify",
+        manual_parameters=[email],
     )
     def post(self, request):
         data = request.data
@@ -134,8 +128,8 @@ class LoginView(generics.GenericAPIView):
 class RequestResetPassword(generics.GenericAPIView):
     serializer_class = serializers.RequestResetPasswordSerializer
 
-    @extend_schema(
-        description="This sends email to request reset password"
+    @swagger_auto_schema(
+        operation_description="This sends email to request reset password"
     )
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -164,6 +158,9 @@ class RequestResetPassword(generics.GenericAPIView):
 class PasswordTokenCheckAPI(generics.GenericAPIView):
     serializer_class = serializers.SetNewPasswordSerializer
 
+    @swagger_auto_schema(
+        operation_description="This returns token and uidb64 to reset password"
+    )
     def get(self, request, uidb64, token):
 
         redirect_url = request.GET.get('redirect_url')
@@ -226,7 +223,6 @@ class UpdateView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
 
-
 class ProfileView(generics.RetrieveUpdateAPIView):
     """
     Get, update user profile
@@ -260,6 +256,9 @@ class BookmarkView(generics.ListCreateAPIView):
         
         return user_profile.bookmarks.all()
 
+    @swagger_auto_schema(
+        operation_description="ID relates to user_id to add recipe in bookmarks"
+    )
     def post(self, request, pk):
         user = CustomUser.objects.get(id=pk)
         user_profile = get_object_or_404(self.profile, user=user)
@@ -269,6 +268,9 @@ class BookmarkView(generics.ListCreateAPIView):
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="ID relates to user_id to delete recipe in bookmarks"
+    )
     def delete(self, request, pk):
         user = CustomUser.objects.get(id=pk)
         user_profile = get_object_or_404(self.profile, user=user)

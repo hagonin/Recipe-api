@@ -7,12 +7,11 @@ coreapi==2.3.3
 coreschema==0.0.4
 dj-database-url==1.2.0
 Django==4.1.5
-django-cache-url==3.4.4
+django-cloudinary-storage==0.3.0
 django-cors-headers==3.13.0
 django-filter==22.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
-drf-spectacular==0.26.0
 drf-yasg==1.21.5
 gunicorn==20.1.0
 idna==3.4
@@ -22,13 +21,13 @@ Jinja2==3.1.2
 jsonschema==4.17.3
 Markdown==3.4.1
 MarkupSafe==2.1.2
-marshmallow==3.19.0
 packaging==23.0
+Pillow==9.4.0
 Pint==0.20.1
 psycopg2==2.9.5
 PyJWT==2.6.0
 pyrsistent==0.19.3
-python-decouple==3.8
+python-decouple==3.7
 pytz==2022.7.1
 PyYAML==6.0
 requests==2.28.2
@@ -39,3 +38,4 @@ sqlparse==0.4.3
 tzdata==2022.7
 uritemplate==4.1.1
 urllib3==1.26.14
+whitenoise==6.4.0

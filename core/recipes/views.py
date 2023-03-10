@@ -1,19 +1,18 @@
-from rest_framework import viewsets
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_cookie
+from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.mixins import (CreateModelMixin,DestroyModelMixin, 
-                                UpdateModelMixin)
-
+from rest_framework.mixins import CreateModelMixin,DestroyModelMixin,UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated,AllowAny  
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
-from .filters import SearchVectorFilter
 from . import serializers
+from .paginations import RecipeCustomPagination
+from .filters import SearchVectorFilter
 from .models import Recipe,RecipeImage,RecipeReview,Ingredient
 
 from .permissions import IsOwner
@@ -26,10 +25,11 @@ class RecipeListViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = serializers.RecipeSerializer
     filter_backends = (SearchVectorFilter,DjangoFilterBackend,OrderingFilter)
+    pagination_class = RecipeCustomPagination
     search_fields = ['search_vector']
     ordering_fields = ['created_at']
     filterset_fields = ('category','ingredients__title', 'title')
-
+    
     @method_decorator(cache_page(60*60*4))
     @method_decorator(vary_on_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -47,8 +47,8 @@ class RecipeDetailViewSet(CreateModelMixin,
     permission_classes = [IsOwner]
     serializer_class = serializers.RecipeDetailWriteSerializer
     filter_backends = (SearchVectorFilter,DjangoFilterBackend,OrderingFilter)
-    search_fields = ['^search_vector']
-    ordering_fields = ['created_at', 'rating']
+    search_fields = ['search_vector']
+    ordering_fields = ['created_at']
     filterset_fields = ('category','ingredients__title', 'title')
 
     
@@ -78,7 +78,7 @@ class RecipeDetailReadViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.RecipeDetailReadSerializer
     filter_backends = (SearchVectorFilter,DjangoFilterBackend,OrderingFilter)
     search_fields = ['search_vector']
-    ordering_fields = ['created_at', 'rating']
+    ordering_fields = ['created_at']
     filterset_fields = ('category','ingredients__title', 'title')
     permission_classes = [AllowAny]
 

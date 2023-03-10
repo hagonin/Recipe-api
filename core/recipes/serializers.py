@@ -7,51 +7,38 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = ('id','heading','title','quantity', 'unit','recipe')
 
-
 class ImageSerializer(serializers.ModelSerializer):
-    image_url = serializers.ReadOnlyField()
     
     class Meta:
         model = RecipeImage
-        fields = ('id','image_url','image','caption','recipe')
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation.pop("image")
-
-        return representation
+        fields = ('id','image','caption','recipe')
 
 class MultipleImageSerializer(serializers.Serializer):
     images = ImageSerializer()
 
 class RecipeSerializer(serializers.ModelSerializer):
     search_rank = serializers.FloatField(read_only=True)
-    image_url = serializers.CharField()
     reviews_count = serializers.ReadOnlyField()
     total_number_of_bookmarks = serializers.SerializerMethodField()
     rating = serializers.ReadOnlyField()
     
     class Meta: 
         model = Recipe
-        fields = ('id','title','slug','category','main_image','image_url','rating',
-            'updated_at','total_number_of_bookmarks','reviews_count','search_rank')
+        fields = ('id','title','slug','category','main_image','description',
+            'updated_at','total_number_of_bookmarks','rating','reviews_count',
+            'search_rank','search_vector')
     
     def get_total_number_of_bookmarks(self, obj):
         return obj.get_total_number_of_bookmarks()
     
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation.pop("main_image")
-
-        return representation
-    
 class ReviewSerializer(serializers.ModelSerializer):
-    user = serializers.CharField(source='user.username',read_only=True)
-    avatar = serializers.CharField(source='user.profile.image_url')
+    # user = serializers.CharField(source='user.username',read_only=True)
+    # avatar = serializers.CharField(source='user.profile.avatar')
+    user = UserSerializer(read_only=True)
 
     class Meta: 
         model = RecipeReview
-        fields = ('id','user','user_id','title', 'slug','rating','date_added','avatar',
+        fields = ('id','user','title', 'slug','rating','date_added',
                 'content')
         extra_kwargs = {
             'slug': {'read_only': True}
@@ -68,7 +55,7 @@ class RecipeDetailReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id','user','title','slug','category','main_image','image_url','rating', 'ingredients',
+        fields = ('id','user','title','slug','category','main_image','rating', 'ingredients',
                 'description', 'instructions', 'images', 'serving', 'prep_time','cook_time','search_vector',
                 'created_at','updated_at','source','notes','total_number_of_bookmarks',
                 'reviews', 'reviews_count')
@@ -86,11 +73,10 @@ class RecipeDetailWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id','user','title','slug','category','main_image','image_url','ingredients',
-                'description', 'instructions', 'images', 'serving', 'prep_time','cook_time','search_vector',
-                'created_at','updated_at','source','notes')
+        fields = ('id','user','title','slug','category','main_image','ingredients',
+                'description', 'instructions', 'images', 'serving', 'prep_time',
+                'cook_time','search_vector','created_at','updated_at','source','notes')
 
-    
     def _create_ingredients(self, ingredients, recipe):
         for ingredient in ingredients:
             ingr = Ingredient.objects.create(**ingredient)
@@ -128,5 +114,3 @@ class RecipeDetailWriteSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-    
- 
