@@ -108,9 +108,9 @@ else:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': config("DB_PASSWORD"),
-            'HOST': config("DB_HOSTNAME"),
-            'PORT': config("DB_PORT")
+            'PASSWORD': config("DB_PASSWORD_1"),
+            'HOST': config("DB_HOSTNAME_1"),
+            'PORT': config("DB_PORT_1")
         }
     }
 
@@ -226,9 +226,3 @@ LOGGING = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'recipes_cache',
-    }
-}

@@ -26,3 +26,9 @@ CLOUDINARY_STORAGE = {
                                 'hdp', 'png', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'ico']
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'recipes_cache',
+    }
+}

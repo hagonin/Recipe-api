@@ -54,9 +54,6 @@ Project is: _in progress_
 ## Authors
 Inspiring women who work in tech, we are all self-taught and cooperate to build remarkable websites.
  
-Ha Gonin  – goninha@outlook.fr - feel free to contact me 
-Mi Huynh - huynhmi1209@gmail.com 
- 
  You can find me here at:
 [Ha Gonin](goninha@outlook.fr)  - feel free to contact me 
 
