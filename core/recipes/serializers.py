@@ -65,6 +65,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     
 class RecipeDetailReadSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
+    bio = serializers.ReadOnlyField(source = 'user.profile.bio')    
     ingredients = IngredientSerializer(many=True)
     images = ImageSerializer(many=True,required=False)
     reviews = serializers.SerializerMethodField(method_name='get_reviews', read_only=True)
@@ -74,7 +75,7 @@ class RecipeDetailReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id','user','title','slug','category','main_image','rating', 'ingredients',
+        fields = ('id','user','bio','title','slug','category','main_image','rating', 'ingredients',
                 'description', 'instructions', 'images', 'serving', 'prep_time','cook_time','search_vector',
                 'created_at','updated_at','source','notes','total_number_of_bookmarks',
                 'reviews', 'reviews_count')
