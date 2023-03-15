@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from datetime import datetime, timezone
 from .models import Recipe, RecipeReview, Ingredient,RecipeImage
 from users.serializers import UserSerializer
 
@@ -35,6 +36,24 @@ class RecipeSerializer(serializers.ModelSerializer):
     
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    date_added = serializers.SerializerMethodField()
+
+    def get_date_added(self, obj):
+        now = datetime.now(timezone.utc)
+        diff = now - obj.date_added
+        if diff.days >= 30:
+            return obj.date_added.strftime('%-d %B %Y')
+        elif diff.days > 0:
+            return f"{diff.days} days ago"
+        elif diff.seconds >= 3600:
+            hours = diff.seconds // 3600
+            return f"{hours} {'hour' if hours == 1 else 'hours'} ago"
+        elif diff.seconds >= 60:
+            minutes = diff.seconds // 60
+            return f"{minutes} {'minute' if minutes == 1 else 'minutes'} ago"
+        else:
+            return 'just now'
+
 
     class Meta: 
         model = RecipeReview
@@ -43,9 +62,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'slug': {'read_only': True}
         }
-
+    
 class RecipeDetailReadSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField(read_only=True)
+    user = serializers.ReadOnlyField(source='user.username')
     ingredients = IngredientSerializer(many=True)
     images = ImageSerializer(many=True,required=False)
     reviews = serializers.SerializerMethodField(method_name='get_reviews', read_only=True)
@@ -59,9 +78,6 @@ class RecipeDetailReadSerializer(serializers.ModelSerializer):
                 'description', 'instructions', 'images', 'serving', 'prep_time','cook_time','search_vector',
                 'created_at','updated_at','source','notes','total_number_of_bookmarks',
                 'reviews', 'reviews_count')
-        
-    def get_user(self, obj):
-        return obj.user.username
 
     def get_reviews(self, obj):
         reviews = obj.reviews.all()
