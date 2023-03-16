@@ -34,7 +34,7 @@ class UserShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('username','profile')
+        fields = ('id','username','profile')
     
 class RegistrationSerializer(serializers.ModelSerializer):
     """
