@@ -4,8 +4,8 @@ import math
 
 
 class RecipeCustomPagination(PageNumberPagination):
-    page_size = 20 # default page size
-    max_page_size = 50 # default max page size
+    page_size = 10 # default page size
+    max_page_size = 100 # default max page size
     page_size_query_param = 'p' 
     
     def get_paginated_response(self, data):
