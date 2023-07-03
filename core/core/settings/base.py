@@ -105,9 +105,9 @@ else:
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'railway',
             'USER': 'postgres',
-            'PASSWORD': config("DB_PASSWORD_1"),
-            'HOST': config("DB_HOSTNAME_1"),
-            'PORT': config("DB_PORT_1")
+            'PASSWORD': config("DB_PASSWORD"),
+            'HOST': config("DB_HOSTNAME"),
+            'PORT': config("DB_PORT")
         }
     }
 
