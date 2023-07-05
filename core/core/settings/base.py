@@ -168,7 +168,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_THROTTLE_RATES':{
         'anon':'2/day',
-        'user':'1/min'
+        'user':'200/day'
     },
     'NON_FIELD_ERRORS_KEY': 'error',
 }
