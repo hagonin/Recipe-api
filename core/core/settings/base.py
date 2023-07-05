@@ -166,9 +166,9 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
     ),
-      'DEFAULT_THROTTLE_RATES':{
+    'DEFAULT_THROTTLE_RATES':{
         'anon':'2/day',
-        'user':'5/hour'
+        'user':'1/min'
     },
     'NON_FIELD_ERRORS_KEY': 'error',
 }
